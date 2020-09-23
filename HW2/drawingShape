@@ -1,0 +1,174 @@
+///////////////////////////////////////////////////////////////////////////////////////////        
+// CSCI4550_HW2
+// Cathy Fung
+// 1/30/2020
+// This is a program to draw the shape of ring, triangle, star, diamond, cross, and arrow
+/////////////////////////////////////////////////////////////////////////////////////////// 
+
+#include <cstdlib>
+#include <cmath>
+#include <iostream>
+
+#include <GL/glew.h>
+#include <GL/freeglut.h> 
+
+#define PI 3.14159265
+#define N 40.0 // Number of vertices on the boundary of the disc.
+
+// Globals.
+static int isWire = 0; // Is wireframe?
+static long font = (long)GLUT_BITMAP_8_BY_13; // Font selection.
+
+// Function to draw two ring with center at (X, Y, Z), radius R(the inner circle), parallel to the xy-plane.
+void DrawRing(float R, float X, float Y, float Z) {
+	float angle;
+	int i;
+	if (isWire) glPolygonMode(GL_FRONT, GL_LINE); else glPolygonMode(GL_FRONT, GL_FILL);
+	glColor3f(0.4, 0.4, 0.4);
+	glBegin(GL_TRIANGLE_STRIP);
+
+	for (i = 0; i <= N; ++i)
+	{
+		angle = 2 * PI * i / N;
+		//drawing the inner circle
+		glVertex3f(X + cos(angle) * R, Y + sin(angle) * R, Z);
+		//drawing the outer circle which the different of radius is 4
+		glVertex3f(X + cos(angle) * (R + 4.0), Y + sin(angle) * (R + 4.0), Z);
+	}
+	glEnd();
+}
+
+// Function to draw a triangle with center at (X, Y, Z)
+void DrawTriangle(float X, float Y, float Z) {
+	glBegin(GL_TRIANGLES);
+	glColor3f(0.0, 0.0, 1.0);
+	glVertex3f((X - 4.0), (Y - 4.0), Z);
+	glVertex3f((X + 4.0), (Y - 4.0), Z);
+	glVertex3f(X, (Y + 4.0), Z);
+	glEnd();
+}
+
+// Function to draw a star with center at (X, Y, Z)
+void DrawStar(float X, float Y, float Z) {
+	glBegin(GL_TRIANGLES);
+	glColor3f(0.2, 0.8, 0.3);
+	//Create a star by four triangle
+	glVertex3f((X - 6.0), (Y + 2.0), Z);
+	glVertex3f((X + 2.0), (Y + 2.0), Z);
+	glVertex3f((X + 4.0), (Y - 6.0), Z);
+
+	glVertex3f(X, (Y + 6.0), Z);
+	glVertex3f((X - 4.0), (Y - 6.0), Z);
+	glVertex3f((X + 3.0), Y, Z);
+
+	glVertex3f((X + 6.0), (Y + 2.0), Z);
+	glVertex3f((X - 2.0), (Y + 2.0), Z);
+	glVertex3f((X - 4.0), (Y - 6.0), Z);
+
+	glVertex3f(X, (Y + 6.0), Z);
+	glVertex3f((X - 3.0), Y, Z);
+	glVertex3f((X + 4.0), (Y - 6.0), Z);
+
+	glEnd();
+}
+
+// Function to draw a diamond with center at (X, Y, Z)
+void DrawDiamond(float X, float Y, float Z) {
+	glBegin(GL_POLYGON);
+	glColor3f(1.0, 1.0, 0.0);
+	glVertex3f(X, (Y + 6.0), 0.0);
+	glVertex3f((X - 6.0), Y, 0.0);
+	glVertex3f(X, (Y - 6.0), 0.0);
+	glVertex3f((X + 6.0), Y, 0.0);
+	glEnd();
+}
+
+// Function to draw a cross with center at (X, Y)
+void DrawCross(float X, float Y) {
+	glColor3f(1.0, 0.0, 0.0);
+	//Create a cross by two rectangle
+	glRectf((X - 2.0), (Y - 6.0), (X + 2.0), (Y + 6.0));
+	glRectf((X - 6.0), (Y - 2.0), (X + 6.0), (Y + 2.0));
+}
+
+// Function to draw a arrow with center at (X, Y, Z)
+void DrawArrow(float X, float Y, float Z) {
+	glColor3f(0.65, 0.30, 0.15);
+	//Create a cross by a rectangle and a triangle
+	glBegin(GL_TRIANGLES);
+	glVertex3f((X - 6.0), (Y + 12.0), Z);
+	glVertex3f((X + 6.0), (Y + 12.0), Z);
+	glVertex3f(X, (Y + 18.0), Z);
+	glEnd();
+	glRectf((X - 2.0), (Y - 18.0), (X + 2.0), (Y + 12.0));
+}
+
+
+// Drawing routine.
+void drawScene(void)
+{
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	DrawRing(38.0, 50, 50, 0.0);
+	DrawTriangle(50.0, 78.0, 0.0);
+	DrawStar(22.0, 50.0, 0.0);
+	DrawDiamond(50.0, 22.0, 0.0);
+	DrawCross(78.0, 50.0);
+	DrawArrow(50.0, 50.0, 0.0);
+
+	glFlush();
+}
+
+// Initialization routine.
+void setup(void)
+{
+	glClearColor(1.0, 1.0, 1.0, 0.0);
+}
+
+// OpenGL window reshape routine.
+void resize(int w, int h)
+{
+	glViewport(0, 0, w, h);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0.0, 100.0, 0.0, 100.0, -1.0, 1.0);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+}
+
+// Keyboard input processing routine.
+void keyInput(unsigned char key, int x, int y)
+{
+	switch (key)
+	{
+	case 27:
+		exit(0);
+		break;
+	default:
+		break;
+	}
+}
+
+// Main routine.
+int main(int argc, char **argv)
+{
+	glutInit(&argc, argv);
+
+	glutInitContextVersion(4, 3);
+	glutInitContextProfile(GLUT_COMPATIBILITY_PROFILE);
+
+	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA | GLUT_DEPTH);
+	glutInitWindowSize(500, 500);
+	glutInitWindowPosition(100, 100);
+	glutCreateWindow("CSCI4550_HW2.cpp");
+	glutDisplayFunc(drawScene);
+	glutReshapeFunc(resize);
+	glutKeyboardFunc(keyInput);
+
+	glewExperimental = GL_TRUE;
+	glewInit();
+
+	setup();
+
+	glutMainLoop();
+}
