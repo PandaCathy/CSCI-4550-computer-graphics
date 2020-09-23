@@ -2,7 +2,7 @@
 // CSCI4550_HW3
 // Cathy Fung
 // 2/20/2020
-// This is a c++ program run as a matching game.
+// This is a c++ program whcih is a matching game.
 // User will select one of the shape (triangle, star, diamond, cross), the arrow will randomly point to one of the shape.
 // User win if the arrow point to the shape that is selected, otherwise user lose.
 // Extra Feature 'r' : all four shape abject will translated counter-clockwise
